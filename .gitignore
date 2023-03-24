@@ -1,3 +1,4 @@
 BACKEND/venv/
 BACKEND/nsqip.txt
+*.db
 .env

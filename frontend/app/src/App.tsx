@@ -6,13 +6,18 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage/>}/>
-      </Routes>
-    </Router>
+    //<DndProvider backend={HTML5Backend}>
+  //<HomePage/>
+ //</DndProvider>
+ <Router>
+        <Routes>
+          <Route path="/" element={ <HomePage/>}/>
+        </Routes>
+      </Router>
+
   )
 }
 

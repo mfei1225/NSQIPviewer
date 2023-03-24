@@ -21,7 +21,7 @@ print(data.head)
 
 '''
 
-CREATE TABLE NSQIP_data(
+CREATE TABLE NSQIP2018(
 PUFYEAR int,
 CaseID int,
 SEX varchar(255),
@@ -295,7 +295,7 @@ PODIAG_OTHER10 varchar(255),
 ANESTHES_OTHER varchar(255),
 OTHCDIFF varchar(255),
 NOTHCDIFF int,
-DOTHCDIFF int,
+DOTHCDIFF int
 )
 
 \COPY nsqip_data FROM 'C:\\Users\\Michael\\Documents\\NSQIPviewer\\BACKEND\\nsqip.txt' with delimiter ',' NULL AS 'NULL' CSV header

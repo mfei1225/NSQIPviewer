@@ -9,9 +9,9 @@ Start virtual environment
 backend\venv\Scripts\activate.bat
 ```
 
-Install Django
+Install requirements
 ```
-pip install Django
+pip install -r requirements.txt
 ```
 
 

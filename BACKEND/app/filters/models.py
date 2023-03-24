@@ -8,9 +8,10 @@
 from django.db import models
 
 
-class Nsqip2018(models.Model):
+class NSQIP_2018(models.Model):
+
     pufyear = models.IntegerField(blank=True, null=True)
-    caseid = models.IntegerField(blank=True, null=True)
+    caseid = models.IntegerField(blank=True, primary_key=True)
     sex = models.CharField(max_length=255, blank=True, null=True)
     race_new = models.CharField(max_length=255, blank=True, null=True)
     ethnicity_hispanic = models.CharField(max_length=255, blank=True, null=True)
@@ -286,4 +287,12 @@ class Nsqip2018(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'nsqip2018'
+        db_table = 'NSQIP2018'
+
+class NSQIP_META(models.Model):
+    Name = models.CharField(max_length=255, primary_key=True)
+    Label = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'NSQIP_META'
