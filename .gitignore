@@ -2,3 +2,5 @@ BACKEND/venv/
 BACKEND/nsqip.txt
 *.db
 .env
+__pycache__
+
