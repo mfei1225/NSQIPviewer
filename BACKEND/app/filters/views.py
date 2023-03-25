@@ -1,6 +1,7 @@
 from .models import NSQIP_2018,NSQIP_META
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.core import serializers
 
 from django.http import JsonResponse
 
@@ -18,8 +19,13 @@ class ColumnsNames(APIView):
 class ColumnsDetails(APIView):
     def get(self, request):
         result = NSQIP_META.objects.all().values()  
-
         return Response(result)
+
+class ColumnsDetailsSingle(APIView):
+    def get(self, request,filter):
+        result = NSQIP_META.objects.get(Name=filter).Label
+        return Response(result)
+      
     
 
 

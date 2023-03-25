@@ -11,11 +11,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import MenuListItem from "./MenuListItemComp";
 
 
-const drawerWidth = 240;
+const drawerWidth = 230;
+interface SideMenuProps {
+  filters:string[]
+  ,
+  setSelectedFilter:React.Dispatch<React.SetStateAction<string>>;
+}
 
-export default function SideMenuComp() {
+const SideMenuComp: React.VFC<SideMenuProps>=({filters,setSelectedFilter}) =>{
   return (
     
       <Drawer
@@ -24,6 +30,7 @@ export default function SideMenuComp() {
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
+            border: 0,
             boxSizing: 'border-box',
           },
         }}
@@ -31,33 +38,15 @@ export default function SideMenuComp() {
         anchor="left"
       >
         <Toolbar />
-        <Divider />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-       
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-    
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+   
+        {filters.map((filter) => {
+              return ( <MenuListItem filter={filter} setSelectedFilter={setSelectedFilter} />
+              );
+            })
+            }
+     
       </Drawer>
    
   );
 }
+export default SideMenuComp

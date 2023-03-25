@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from .views import RecordCount,ColumnsNames,ColumnsDetails
+from .views import RecordCount,ColumnsNames,ColumnsDetails,ColumnsDetailsSingle
 
 
 router =DefaultRouter()
@@ -21,7 +21,13 @@ urlpatterns = router.urls +[
         "columns/details",
         ColumnsDetails.as_view(),
         name = "column names"
+    ),
+     path(
+        "columns/details/<str:filter>/",
+        ColumnsDetailsSingle.as_view(),
+        name = "single column names"
     )
+
 
 
 ]
