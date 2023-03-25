@@ -1,6 +1,6 @@
 import React from 'react'
 import Chip from "@mui/material/Chip";
-import { useDrag } from 'react-dnd';
+
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -20,9 +20,10 @@ const MenuListItemComp: React.VFC<MenuListProps>=({filter,setSelectedFilter}) =>
     const getLabelhelper = async() =>{
       console.log(filter)
       try{
-          const response = await axios.get(`api/columns/details/${filter}`);
+          const response = await axios.get('api/columns/single/'+filter);
           setSelectedFilter(response.data)
       } catch (err){
+        console.log(err)
           
       }
   }

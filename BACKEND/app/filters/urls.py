@@ -23,7 +23,7 @@ urlpatterns = router.urls +[
         name = "column names"
     ),
      path(
-        "columns/details/<str:filter>/",
+        "columns/single/<str:filter>",
         ColumnsDetailsSingle.as_view(),
         name = "single column names"
     )

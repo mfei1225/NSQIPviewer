@@ -9,9 +9,7 @@ import {
 
 function App() {
   return (
-    //<DndProvider backend={HTML5Backend}>
-  //<HomePage/>
- //</DndProvider>
+
  <Router>
         <Routes>
           <Route path="/" element={ <HomePage/>}/>

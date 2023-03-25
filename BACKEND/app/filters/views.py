@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.core import serializers
 
 from django.http import JsonResponse
+from django.db.models import Q
 
 class RecordCount(APIView):
     def get(self, request):
@@ -23,7 +24,12 @@ class ColumnsDetails(APIView):
 
 class ColumnsDetailsSingle(APIView):
     def get(self, request,filter):
-        result = NSQIP_META.objects.get(Name=filter).Label
+        filter1 = " ".join(filter.split("_"))
+        filter2 = "".join(filter.split("_"))
+        print(filter2,filter1)
+    
+        result = NSQIP_META.objects.get(Q(Name__iexact=filter1) | Q(Name__iexact=filter2)).Label
+
         return Response(result)
       
     
