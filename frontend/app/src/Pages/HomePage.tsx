@@ -1,8 +1,9 @@
 import React from "react";
 import {useEffect, useState} from 'react';
-import ChipComp from "../Components/ChipComp";
+import ChipComp from "../Components/MenuListItemComp";
 import Box from '@mui/material/Box';
 import SideMenuComp from "../Components/SideMenuComp";
+import DetailFiltersComp from "../Components/DetailFiltersComp";
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
@@ -14,6 +15,7 @@ const drawerWidth = 240;
 const HomePage: React.VFC = () => {
     const [count, setCount] = useState(0)
     const [columns, setColumns] = useState([])
+    const [selectedFilter, setSelectedFilter] = useState("Select Filter")
 
     useEffect(() =>{
         const getCount = async() =>{
@@ -50,22 +52,18 @@ const HomePage: React.VFC = () => {
       >
  
       </AppBar>
-      <SideMenuComp/>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-      >
+      <SideMenuComp filters={columns} setSelectedFilter={setSelectedFilter}/>
+      <DetailFiltersComp filter={selectedFilter}/>
+      
+    
+       
            
        
             {count}
             
-            {columns.map((columns) => {
-              return ( <ChipComp name={columns} />
-              );
-            })
-            }
+           
          </Box>
-        </Box>
+
   
 
     );
