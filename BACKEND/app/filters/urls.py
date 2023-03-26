@@ -1,10 +1,11 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from .views import RecordCount,ColumnsNames,ColumnsDetails,ColumnsDetailsSingle
+from .views import RecordCount,ColumnsNames,ColumnsDetails,FilterView
 
 
 router =DefaultRouter()
-router.trailing_slash = "/?"
+
+router.register(r'columns/details', ColumnsDetails, basename="colmun details")
 urlpatterns = router.urls +[
     path(
         "record/count",
@@ -15,19 +16,12 @@ urlpatterns = router.urls +[
         "columns",
         ColumnsNames.as_view(),
         name = "column names"
-    )
-    ,
-    path(
-        "columns/details",
-        ColumnsDetails.as_view(),
-        name = "column names"
     ),
-     path(
-        "columns/single/<str:filter>",
-        ColumnsDetailsSingle.as_view(),
-        name = "single column names"
+    path(
+        "filter",
+        FilterView.as_view(), 
+        name = "filter"
+
     )
-
-
 
 ]

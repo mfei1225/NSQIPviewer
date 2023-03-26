@@ -12,32 +12,22 @@ import ListItemText from '@mui/material/ListItemText';
 import axios from "../Utils/axios";
 
 interface MenuListProps {
-  filter:string,
-  setSelectedFilter:React.Dispatch<React.SetStateAction<string>>;
+  filter: string,
+  setSelectedFilter: React.Dispatch<React.SetStateAction<string>>;
 }
-const MenuListItemComp: React.VFC<MenuListProps>=({filter,setSelectedFilter}) =>{
-  const getLabel = () =>{
-    const getLabelhelper = async() =>{
-      console.log(filter)
-      try{
-          const response = await axios.get('api/columns/single/'+filter);
-          setSelectedFilter(response.data)
-      } catch (err){
-        console.log(err)
-          
-      }
-  }
-  getLabelhelper()
-      
+const MenuListItemComp: React.VFC<MenuListProps> = ({ filter, setSelectedFilter }) => {
+  const getLabel = () => {
+      setSelectedFilter(filter)
+
   }
   return (
-  <div>
-     <ListItem key={filter} disablePadding>
-              <ListItemButton onClick={getLabel}>
-                <ListItemText primary={filter} />
-              </ListItemButton>
-        </ListItem>
-    </div>     
+    <div>
+      <ListItem key={filter} disablePadding>
+        <ListItemButton onClick={getLabel}>
+          <ListItemText primary={filter} />
+        </ListItemButton>
+      </ListItem>
+    </div>
   )
 }
 
