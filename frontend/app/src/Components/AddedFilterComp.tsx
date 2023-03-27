@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -18,32 +19,65 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import axios from "../Utils/axios";
+import CircularProgress from '@mui/material/CircularProgress';
 
 
-const drawerWidth = 330;
+const drawerWidth = 240;
+
+interface dbCount {
+  db: string,
+  count: number,
+}
 
 interface DetailFilterMeta {
-  searchTerm: number,
+  searchTerms: number[],
   filter: string,
   label: string
 }
 interface AddedFilterProps {
-  filters: DetailFilterMeta[]
-  setCount: React.Dispatch<React.SetStateAction<number>>
-
+  filters: DetailFilterMeta[],
+  selectColumns:string[],
+  setIsLoadingCount: React.Dispatch<React.SetStateAction<boolean>>,
+  setCount: React.Dispatch<React.SetStateAction<dbCount[]>>
 }
-const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setCount}) => {
-
+const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCount,selectColumns,setCount}) => {
+  const [isLoadingExport, setIsLoadingExport] = useState(false)
 
   const applyFilters = () => {
-    console.log('hello')
+    
+    setIsLoadingCount(true)
     axios.post('filter', {
       filters:filters  
     }
     ).then((res) =>{
+      
       setCount(res.data)
+      setIsLoadingCount(false)
     }
     )
+  }
+
+  
+
+
+  const applyFiltersAndExport = () => {
+    setIsLoadingExport(true)
+    
+    axios.post('filter/export', {
+      filters:filters,
+      selectColumns:selectColumns
+    }
+    ).then((res) =>{
+      const csvString =[]
+      const array = [Object.keys(res.data['NSQIP2018'][0])].concat(res.data['NSQIP2018'])
+
+      console.log(array.map(it => {
+        return Object.values(it).toString()
+      }).join('\n'))
+      
+    }
+    )
+    setIsLoadingExport(false)
   }
 return (
 
@@ -64,7 +98,7 @@ return (
     <Toolbar />
     <Box sx={{ m: 3 }}>
       {filters.map((filter) => {
-        return (<Card sx={{ minWidth: 275 }} variant="outlined">
+        return (<Card sx={{ minWidth: 210 }} variant="outlined">
           <CardContent>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               {filter.filter}
@@ -73,7 +107,7 @@ return (
               {filter.label}
             </Typography>
             <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              {filter.searchTerm}
+              {filter.searchTerms.join(',')}
             </Typography>
           </CardContent>
           <CardActions>
@@ -86,7 +120,9 @@ return (
       }
     </Box>
 
-    <Button variant="outlined" onClick={applyFilters}>apply filter</Button>
+    <Button variant="outlined" onClick={applyFilters}>Apply Funnel Filter</Button>
+    {isLoadingExport? <CircularProgress />  :<Button variant="outlined" onClick={applyFiltersAndExport}>Apply Funnel Filter and export</Button>}
+
 
   </Drawer>
 

@@ -14,14 +14,15 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuListItem from "./MenuListItemComp";
 
 
-const drawerWidth = 230;
+const drawerWidth = 270;
 interface SideMenuProps {
-  filters:string[]
-  ,
+  filters:string[],
+  selectColumns:string[],
+  setSelectColumns:React.Dispatch<React.SetStateAction<string[]>>,
   setSelectedFilter:React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SideMenuComp: React.VFC<SideMenuProps>=({filters,setSelectedFilter}) =>{
+const SideMenuComp: React.VFC<SideMenuProps>=({filters,setSelectedFilter,setSelectColumns,selectColumns}) =>{
   return (
     
       <Drawer
@@ -40,7 +41,7 @@ const SideMenuComp: React.VFC<SideMenuProps>=({filters,setSelectedFilter}) =>{
         <Toolbar />
    
         {filters.map((filter) => {
-              return ( <MenuListItem filter={filter} setSelectedFilter={setSelectedFilter} />
+              return ( <MenuListItem filter={filter} selectColumns={selectColumns} setSelectedFilter={setSelectedFilter}  setSelectColumns={setSelectColumns}/>
               );
             })
             }

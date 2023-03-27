@@ -21,7 +21,7 @@ import Button from '@mui/material/Button';
 const drawerWidth = 230;
 
 interface DetailFilterMeta {
-    searchTerm: number,
+    searchTerms: number[],
     filter: string,
     label: string
 }
@@ -33,13 +33,14 @@ interface DetailFiltersProps {
 
 const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters, setAddedFilters }) => {
     const DetailFilterDefualt = {
-        searchTerm: 0,
+        searchTerms: [],
         filter: "",
         label: "",
     };
     const [firstRender, setFirstRender] = useState(true);
-    const [label, setLabel] = useState("Select Filter2")
-    const [searchTerm, setSearchTerm] = useState<DetailFilterMeta>(DetailFilterDefualt)
+    const [label, setLabel] = useState("Select Filter")
+    const [searchTerm, setSearchTerm] = useState<number>(0)
+    const [allSearchTerm, setAllSearchTerm] = useState<number[]>([])
     const [filterType, setFilterType] = useState<string>("")
 
     useEffect(() => {
@@ -55,26 +56,25 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
     }, [filter])
 
     const addToFilter = () => {
-        setAddedFilters([
-            ...addedFilters, searchTerm
+        setAllSearchTerm([
+            ...allSearchTerm, searchTerm
         ]);
+    }
+
+    const addToFunnel = () => {
+        setAddedFilters([...addedFilters,
+            {
+                'searchTerms': allSearchTerm,
+                'filter': filter,
+                'label': label
+            }]);
+            setAllSearchTerm([])
 
     }
 
     const handleChange = (event: any) => {
-
-        setSearchTerm(
-            {
-                'searchTerm': event.target.value,
-                'filter': filter,
-                'label': label
-            }
-        );
-
+        setSearchTerm(event.target.value)
     };
-
-
-
 
     return (
         <div>
@@ -91,10 +91,18 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
                     name="Search"
                 /> : ''
                 }
-
-
-
-                <Button variant="outlined" onClick={addToFilter}>add filter</Button>
+                Added filters:
+                {
+                allSearchTerm.map((item) => {
+                    return(
+                        <div>
+                            {item}
+                        </div>
+                    )
+                })
+                    }
+                <Button variant="outlined" onClick={addToFilter}>Add Filter(OR logic)</Button>
+                <Button variant="outlined" onClick={addToFunnel}>Add to Funnel</Button>
             </Box>
         </div>
     );

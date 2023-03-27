@@ -9,21 +9,29 @@ import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import Toolbar from '@mui/material/Toolbar';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import axios from "../Utils/axios";
+import { number } from "yargs";
 const drawerWidth = 240;
 
-interface  DetailFilterMeta{
-    searchTerm: number,
-    filter:string,
+interface DetailFilterMeta {
+    searchTerms: number[],
+    filter: string,
     label: string
-  }
+}
 
+interface dbCount {
+    db: string,
+    count: number,
+}
 const HomePage: React.VFC = () => {
-    const [count, setCount] = useState(0)
+    const [count, setCount] = useState<dbCount[]>([])
     const [columns, setColumns] = useState([])
     const [addedFilters, setAddedFilters] = useState<DetailFilterMeta[]>([])
-    const [selectedFilter, setSelectedFilter] = useState("Select Filter")
+    const [selectedFilter, setSelectedFilter] = useState("")
+    const [selectColumns, setSelectColumns] = useState<string[]>([])
+    const [isLoadingCount, setIsLoadingCount] = useState(true)
 
     useEffect(() => {
         const getCount = async () => {
@@ -33,6 +41,7 @@ const HomePage: React.VFC = () => {
             } catch (err) {
 
             }
+            setIsLoadingCount(false)
         }
         getCount()
     }, [])
@@ -60,11 +69,30 @@ const HomePage: React.VFC = () => {
             >
 
             </AppBar>
-            <SideMenuComp filters={columns} setSelectedFilter={setSelectedFilter} />
-            <DetailFiltersComp filter={selectedFilter} addedFilters = {addedFilters}  setAddedFilters={setAddedFilters}/>
-            <AddedFilterComp filters={addedFilters} setCount={setCount} />
+            <SideMenuComp filters={columns} setSelectedFilter={setSelectedFilter} setSelectColumns={setSelectColumns} selectColumns={selectColumns}/>
+            <DetailFiltersComp filter={selectedFilter} addedFilters={addedFilters} setAddedFilters={setAddedFilters} />
+            <Box
+                component="main"
+                sx={{ bgcolor: 'background.default', p: 3, width: 300 }}
+            >
+            {isLoadingCount ? <CircularProgress /> :
+                
+                count.map((item) => {
+                    return(
+                        <div>
+                            {item.db} : {item.count}
+                        </div>
+                    )
+                })
+            }
+                <div>
+                    
+                    total : {Object.values(count).reduce((a, b) => a + b.count, 0)}
+                </div>
+            </Box>
+            <AddedFilterComp filters={addedFilters} setCount={setCount} setIsLoadingCount={setIsLoadingCount} selectColumns={selectColumns} />
 
-            {count}
+
 
 
         </Box>

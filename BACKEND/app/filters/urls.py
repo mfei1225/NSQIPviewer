@@ -1,10 +1,10 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from .views import RecordCount,ColumnsNames,ColumnsDetails,FilterView
+from .views import RecordCount,ColumnsNames,ColumnsDetails,FilterView,FilterExportView
 
 
 router =DefaultRouter()
-
+router.trailing_slash="/?"
 router.register(r'columns/details', ColumnsDetails, basename="colmun details")
 urlpatterns = router.urls +[
     path(
@@ -21,7 +21,11 @@ urlpatterns = router.urls +[
         "filter",
         FilterView.as_view(), 
         name = "filter"
-
+    ),
+    path(
+        "filter/export",
+        FilterExportView.as_view(), 
+        name = "filter"
     )
 
 ]

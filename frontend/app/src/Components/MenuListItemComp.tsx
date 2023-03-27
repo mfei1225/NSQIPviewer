@@ -10,21 +10,37 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import axios from "../Utils/axios";
+import Checkbox from '@mui/material/Checkbox';
 
 interface MenuListProps {
   filter: string,
+  selectColumns: string[],
   setSelectedFilter: React.Dispatch<React.SetStateAction<string>>;
+  setSelectColumns: React.Dispatch<React.SetStateAction<string[]>>,
 }
-const MenuListItemComp: React.VFC<MenuListProps> = ({ filter, setSelectedFilter }) => {
+const MenuListItemComp: React.VFC<MenuListProps> = ({ filter, setSelectedFilter, selectColumns, setSelectColumns }) => {
   const getLabel = () => {
-      setSelectedFilter(filter)
+    setSelectedFilter(filter)
 
   }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectColumns([...selectColumns, filter])
+    }
+    else {
+      setSelectColumns((selectColumns) =>
+        selectColumns.filter((item) => item !== filter)
+      );
+    }
+  };
+  const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
   return (
     <div>
       <ListItem key={filter} disablePadding>
         <ListItemButton onClick={getLabel}>
           <ListItemText primary={filter} />
+          <Checkbox {...label} onChange={handleChange} />
         </ListItemButton>
       </ListItem>
     </div>
