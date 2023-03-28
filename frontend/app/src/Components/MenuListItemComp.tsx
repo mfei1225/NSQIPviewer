@@ -11,6 +11,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import axios from "../Utils/axios";
 import Checkbox from '@mui/material/Checkbox';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+
 
 interface MenuListProps {
   filter: string,
@@ -34,11 +37,13 @@ const MenuListItemComp: React.VFC<MenuListProps> = ({ filter, setSelectedFilter,
       );
     }
   };
+  
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
   return (
+    
     <div>
       <ListItem key={filter} disablePadding>
-        <ListItemButton onClick={getLabel}>
+        <ListItemButton onClick={getLabel} sx={{ pl: 4 }}>
           <ListItemText primary={filter} />
           <Checkbox {...label} onChange={handleChange} />
         </ListItemButton>

@@ -47,7 +47,7 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
 
         if (firstRender) setFirstRender(false);
         if (!firstRender) {
-            axios.get('columns/details/' + filter)
+            axios.get('columns/details/' + filter.split(' ').join("_"))
                 .then((res) => {
                     setLabel(res.data['label'])
                     setFilterType(res.data['type'])

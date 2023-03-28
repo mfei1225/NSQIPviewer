@@ -12,7 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import axios from "../Utils/axios";
-import { number } from "yargs";
+
 const drawerWidth = 240;
 
 interface DetailFilterMeta {

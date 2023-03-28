@@ -22,6 +22,7 @@ import axios from "../Utils/axios";
 import CircularProgress from '@mui/material/CircularProgress';
 
 
+
 const drawerWidth = 240;
 
 interface dbCount {
@@ -68,16 +69,22 @@ const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCou
       selectColumns:selectColumns
     }
     ).then((res) =>{
-      const csvString =[]
-      const array = [Object.keys(res.data['NSQIP2018'][0])].concat(res.data['NSQIP2018'])
-
-      console.log(array.map(it => {
+    
+      const array = [Object.keys(res.data[0])].concat(res.data)
+      const csv = array.map(it => {
         return Object.values(it).toString()
-      }).join('\n'))
-      
+      }).join('\n')
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const pom = document.createElement('a');
+      pom.href = url;
+      pom.setAttribute('download', "Data.csv");
+      pom.click();
+      setIsLoadingExport(false)
     }
     )
-    setIsLoadingExport(false)
+    
+   
   }
 return (
 

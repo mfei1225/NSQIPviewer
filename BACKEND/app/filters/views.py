@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.core import serializers
 import json
-
+from itertools import chain
 from django.http import JsonResponse
 from django.db.models import Q
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -20,17 +20,7 @@ class RecordCount(APIView):
     
 class ColumnsNames(APIView):
     def get(self, request):
-        res = set()
-        res2= set()
         col = set([field.name for field in NSQIP2018._meta.get_fields()]) 
-        for m in DATA_TABLES:
-            col2 = set([field.name for field in m._meta.get_fields()]) 
-            for v in col2:
-                if v not in col:
-                    res.add((v,m.objects.model._meta.db_table))
-                    res2.add(v)
-        print(res,len(res))
-        print(res2,len(res2))
         return Response(col)
     
 class ColumnsDetails(ReadOnlyModelViewSet):
@@ -40,9 +30,9 @@ class ColumnsDetails(ReadOnlyModelViewSet):
 
     def retrieve(self, request,pk):
         pk1 = " ".join(pk.split("_"))
-        pk2 = "".join(pk.split("_"))
+        pk2 = " ".join(pk.split("_"))
         result = NSQIP_META.objects.get(Q(Name__iexact=pk1) | Q(Name__iexact=pk2)).Label
-        result = {'label':result,'type': NSQIP2018._meta.get_field(pk).__class__.__name__}
+        result = {'label':result,'type': NSQIP2018._meta.get_field(pk.lower()).__class__.__name__}
         return Response(result)
 
 class FilterView(APIView):
@@ -53,7 +43,7 @@ class FilterView(APIView):
             filter_query_or = Q()
            
             for searchTerm in group['searchTerms']:
-                filter_query_or.add(Q(**{ group['filter'] : int(searchTerm)}), Q.OR)
+                filter_query_or.add(Q(**{ group['filter'].lower() : int(searchTerm)}), Q.OR)
             filter_query_and.add(filter_query_or, Q.AND)
         for model in DATA_TABLES:
             result[model.objects.model._meta.db_table]=model.objects.filter(filter_query_and).count()
@@ -64,17 +54,20 @@ class FilterView(APIView):
 class FilterExportView(APIView):
     def post(self, request):
         filter_query_and = Q()
-        result = {}
-        values = ['caseid','age','test']
+        result_perdb = {}
+        select = [item.lower() for item in request.data['selectColumns']]
         for group in request.data['filters']:
             filter_query_or = Q()
-           
             for searchTerm in group['searchTerms']:
-                filter_query_or.add(Q(**{ group['filter'] : int(searchTerm)}), Q.OR)
+                filter_query_or.add(Q(**{ group['filter'].lower()  : int(searchTerm)}), Q.OR)
             filter_query_and.add(filter_query_or, Q.AND)
         for model in DATA_TABLES:
-            result[model.objects.model._meta.db_table]=model.objects.filter(filter_query_and).values(*request.data['selectColumns'])
-        result = [{'db':k,'count':v} for k,v in result.items()]
+            result_perdb[model.objects.model._meta.db_table]=model.objects.filter(filter_query_and).values(*select)
+        querysets = []
+        for value in result_perdb.values():
+            querysets.append(value)
+        result = list(chain(*querysets))
+        
 
         return Response(result)
 
