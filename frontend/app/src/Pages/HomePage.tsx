@@ -90,7 +90,7 @@ const HomePage: React.VFC = () => {
                     total : {Object.values(count).reduce((a, b) => a + b.count, 0)}
                 </div>
             </Box>
-            <AddedFilterComp filters={addedFilters} setCount={setCount} setIsLoadingCount={setIsLoadingCount} selectColumns={selectColumns} />
+            <AddedFilterComp filters={addedFilters} setAddedFilters={setAddedFilters} setCount={setCount} setIsLoadingCount={setIsLoadingCount} selectColumns={selectColumns} />
 
 
 

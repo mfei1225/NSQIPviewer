@@ -20,6 +20,7 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import axios from "../Utils/axios";
 import CircularProgress from '@mui/material/CircularProgress';
+import { withLoading } from '../Utils/withLoading';
 
 
 
@@ -40,8 +41,9 @@ interface AddedFilterProps {
   selectColumns:string[],
   setIsLoadingCount: React.Dispatch<React.SetStateAction<boolean>>,
   setCount: React.Dispatch<React.SetStateAction<dbCount[]>>
+  setAddedFilters: React.Dispatch<React.SetStateAction<DetailFilterMeta[]>>
 }
-const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCount,selectColumns,setCount}) => {
+const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCount,selectColumns,setCount,setAddedFilters}) => {
   const [isLoadingExport, setIsLoadingExport] = useState(false)
 
   const applyFilters = () => {
@@ -56,6 +58,13 @@ const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCou
       setIsLoadingCount(false)
     }
     )
+  }
+
+  const deleteFilter = (filter:DetailFilterMeta) => {
+    
+    setAddedFilters((filters) =>
+    filters.filter((item) => item !== filter)
+  );
   }
 
   
@@ -86,6 +95,9 @@ const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCou
     
    
   }
+  const Component = () => <div>Content</div>;
+
+
 return (
 
   <Drawer
@@ -118,16 +130,19 @@ return (
             </Typography>
           </CardContent>
           <CardActions>
-            <Button size="small">Learn More</Button>
+            <Button  size="small"  onClick={() => deleteFilter(filter)}>Delete</Button>
           </CardActions>
         </Card>
 
         );
       })
       }
+      
     </Box>
 
+    
     <Button variant="outlined" onClick={applyFilters}>Apply Funnel Filter</Button>
+
     {isLoadingExport? <CircularProgress />  :<Button variant="outlined" onClick={applyFiltersAndExport}>Apply Funnel Filter and export</Button>}
 
 

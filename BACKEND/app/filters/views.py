@@ -33,6 +33,13 @@ class ColumnsDetails(ReadOnlyModelViewSet):
         pk2 = " ".join(pk.split("_"))
         result = NSQIP_META.objects.get(Q(Name__iexact=pk1) | Q(Name__iexact=pk2)).Label
         result = {'label':result,'type': NSQIP2018._meta.get_field(pk.lower()).__class__.__name__}
+        set_model =set()
+        for model in DATA_TABLES:
+            values = model.objects.values_list(pk, flat = True).distinct()
+            set_model.add(values)
+        
+        distinct = set(chain(*set_model))
+        print(len(distinct))
         return Response(result)
 
 class FilterView(APIView):
@@ -66,6 +73,7 @@ class FilterExportView(APIView):
         querysets = []
         for value in result_perdb.values():
             querysets.append(value)
+        
         result = list(chain(*querysets))
         
 
