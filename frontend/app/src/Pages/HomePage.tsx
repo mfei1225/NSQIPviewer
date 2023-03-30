@@ -19,6 +19,7 @@ interface DetailFilterMeta {
     searchTerms: number[],
     filter: string,
     label: string
+    
 }
 
 interface dbCount {
