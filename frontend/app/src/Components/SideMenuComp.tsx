@@ -1,24 +1,15 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
+
 import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
+
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+
 import MenuListItem from "./MenuListItemComp";
 import { menu } from '../Utils/layout';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import { Collapse } from '@mui/material';
-import { useEffect, useState } from 'react';
-import CollapseComp from './CollapseComp';
 
+import CollapseComp from './CollapseComp';
+import TextField from '@mui/material/TextField';
+import { useEffect, useState } from 'react';
 
 const drawerWidth = 300;
 interface SideMenuProps {
@@ -26,14 +17,19 @@ interface SideMenuProps {
   selectColumns: string[],
   setSelectColumns: React.Dispatch<React.SetStateAction<string[]>>,
   setSelectedFilter: React.Dispatch<React.SetStateAction<string>>;
+
 }
 
-const SideMenuComp: React.VFC<SideMenuProps> = ({ filters, setSelectedFilter, setSelectColumns, selectColumns }) => {
-  const [open, setOpen] = React.useState(true);
-  const handleClick = () => {
-    setOpen(!open);
-  };
+const SideMenuComp: React.VFC<SideMenuProps> = ({ filters,setSelectedFilter, setSelectColumns, selectColumns }) => {
 
+  const [searchTerm, setSearchTerm] = useState<any>("")
+  const [filteredFilters, setFilteredFilters] = useState<string[]>([])
+  const handleChangeTextbox = (event: any) => {
+    setSearchTerm(event.target.value)
+    setFilteredFilters((filteredFilters) =>
+    filters.filter((item) =>  item.includes(event.target.value))
+  );
+};
   return (
   
     <Drawer
@@ -50,22 +46,30 @@ const SideMenuComp: React.VFC<SideMenuProps> = ({ filters, setSelectedFilter, se
       anchor="left"
     >
       <Toolbar />
-
-      {menu.map((group) => {
+      <TextField
+                        label="Search"
+                        variant="outlined"
+                        onChange={handleChangeTextbox}
+                        name="Search"
+                    />
+      {!searchTerm?menu.map((group) => {
         
         return (
           
           <CollapseComp filter={group.title} items={group.items} selectColumns={selectColumns} setSelectedFilter={setSelectedFilter} setSelectColumns={setSelectColumns} />
         );
-        })
+        }):
+        filteredFilters.sort(function(a, b){
+          return  a.length-b.length;
+        }).map((filter) => {
+          return (
+            <MenuListItem filter={filter} selectColumns={selectColumns} setSelectedFilter={setSelectedFilter} setSelectColumns={setSelectColumns} />
+          );
+          })
+        
       }
     
-      {filters.map((filter) => {
-        return (
-          <MenuListItem filter={filter} selectColumns={selectColumns} setSelectedFilter={setSelectedFilter} setSelectColumns={setSelectColumns} />
-        );
-        })
-      }
+      
 
     </Drawer>
     

@@ -27,7 +27,7 @@ interface dbCount {
 }
 const HomePage: React.VFC = () => {
     const [count, setCount] = useState<dbCount[]>([])
-    const [columns, setColumns] = useState([])
+    const [columns, setColumns] = useState<string[]>([])
     const [addedFilters, setAddedFilters] = useState<DetailFilterMeta[]>([])
     const [selectedFilter, setSelectedFilter] = useState("")
     const [selectColumns, setSelectColumns] = useState<string[]>([])

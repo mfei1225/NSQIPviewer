@@ -10,6 +10,8 @@ from django.db import models
 class NSQIP_META(models.Model):
     Name = models.CharField(max_length=255, primary_key=True)
     Label = models.CharField(max_length=255, blank=True, null=True)
+    type = models.CharField(db_column='Type',max_length=255, blank=True, null=True)
+    values = models.CharField(db_column='values',max_length=1000, blank=True, null=True)
 
     class Meta:
         managed = False

@@ -6,6 +6,26 @@ export const menu = [
             "CPT",
             "WORKRVU",
         ],
+    }, 
+    {
+        title:"Admin",
+        items: [
+            "PUFYEAR",
+            "CaseID",
+            "INOUT",
+            "TRANST",
+            "AdmYR",
+            "OperYR",
+            "DISCHDEST",
+            "ANESTHES"
+        ],
+    },
+    {
+        title:"Surgey Details",
+        items: [
+            "SURGSPEC",
+            "ELECTSURG",
+        ],
     },
     {
         title:"Demographic",

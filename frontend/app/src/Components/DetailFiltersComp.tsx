@@ -1,21 +1,16 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
+
 import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ChipComp from "./MenuListItemComp";
+
 import axios from "../Utils/axios";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 
 const drawerWidth = 230;
@@ -32,16 +27,13 @@ interface DetailFiltersProps {
 }
 
 const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters, setAddedFilters }) => {
-    const DetailFilterDefualt = {
-        searchTerms: [],
-        filter: "",
-        label: "",
-    };
+
     const [firstRender, setFirstRender] = useState(true);
     const [label, setLabel] = useState("Select Filter")
     const [searchTerm, setSearchTerm] = useState<number>(0)
-    const [allSearchTerm, setAllSearchTerm] = useState<number[]>([])
+    const [allSearchTerm, setAllSearchTerm] = useState<any[]>([])
     const [filterType, setFilterType] = useState<string>("")
+    const [filterValues, setFilterValues] = useState<string[]>([])
 
     useEffect(() => {
 
@@ -51,8 +43,10 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
                 .then((res) => {
                     setLabel(res.data['label'])
                     setFilterType(res.data['type'])
+                    setFilterValues(res.data['values'])
                 })
         }
+        setAllSearchTerm([])
     }, [filter])
 
     const addToFilter = () => {
@@ -61,20 +55,33 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
         ]);
     }
 
+
+
     const addToFunnel = () => {
         setAddedFilters([...addedFilters,
-            {
-                'searchTerms': allSearchTerm,
-                'filter': filter,
-                'label': label
-            }]);
-            setAllSearchTerm([])
+        {
+            'searchTerms': allSearchTerm,
+            'filter': filter,
+            'label': label
+        }]);
+        setAllSearchTerm([])
 
     }
 
-    const handleChange = (event: any) => {
+    const handleChangeTextbox = (event: any) => {
         setSearchTerm(event.target.value)
     };
+    const handleChangeCheckbox = (event: any, selected_item: any) => {
+        if (event.target.checked) {
+            setAllSearchTerm([...allSearchTerm, selected_item])
+        }
+        else {
+            setAllSearchTerm((allSearchTerm) =>
+                allSearchTerm.filter((item) => item !== selected_item)
+            );
+        }
+    };
+
 
     return (
         <div>
@@ -84,24 +91,42 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
                 sx={{ bgcolor: 'background.default', p: 3, width: 300 }}
             >{label}
 
-                {filterType == 'IntegerField' ? <TextField
-                    label="Search"
-                    variant="outlined"
-                    onChange={handleChange}
-                    name="Search"
-                /> : ''
-                }
-                Added filters:
                 {
-                allSearchTerm.map((item) => {
-                    return(
-                        <div>
-                            {item}
-                        </div>
-                    )
-                })
-                    }
-                <Button variant="outlined" onClick={addToFilter}>Add Filter(OR logic)</Button>
+                    filterValues.length == 0 ? <div> <TextField
+                        label="Search"
+                        variant="outlined"
+                        onChange={handleChangeTextbox}
+                        name="Search"
+                    />
+                        Added filters:
+                        {
+                            allSearchTerm.map((item) => {
+                                return (
+                                    <div>
+                                        {item}
+                                    </div>
+                                )
+                            })
+                        }
+                        <Button variant="outlined" onClick={addToFilter}>Add Filter(OR logic)</Button>
+                    </div>
+                        : <FormGroup>
+                            {
+                                filterValues.sort().map((item) => {
+                                    if (item != "NULL") {
+                                        return (
+                                            <FormControlLabel control={<Checkbox onChange={event => handleChangeCheckbox(event, item)} />} label={item} />
+                                        )
+                                    }
+                                })
+                                
+                                  
+                            }
+                            {filterValues.includes("NULL")&&<FormControlLabel control={<Checkbox onChange={event => handleChangeCheckbox(event, 'NULL')} />} label="NULL" />}
+                            
+                        </FormGroup>
+                }
+
                 <Button variant="outlined" onClick={addToFunnel}>Add to Funnel</Button>
             </Box>
         </div>

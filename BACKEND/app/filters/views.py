@@ -7,9 +7,10 @@ from itertools import chain
 from django.http import JsonResponse
 from django.db.models import Q
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from django.core import serializers
 
 DATA_TABLES = [NSQIP2018,NSQIP2017,NSQIP2016,NSQIP2015,NSQIP2014,NSQIP2013,NSQIP2012,NSQIP2011,NSQIP2010,NSQIP2009,NSQIP2008]
-#DATA_TABLES = [NSQIP2008]
+
 class RecordCount(APIView):
     def get(self, request):
         result = {}
@@ -31,29 +32,35 @@ class ColumnsDetails(ReadOnlyModelViewSet):
     def retrieve(self, request,pk):
         pk1 = " ".join(pk.split("_"))
         pk2 = " ".join(pk.split("_"))
-        result = NSQIP_META.objects.get(Q(Name__iexact=pk1) | Q(Name__iexact=pk2)).Label
-        result = {'label':result,'type': NSQIP2018._meta.get_field(pk.lower()).__class__.__name__}
-        set_model =set()
-        for model in DATA_TABLES:
-            values = model.objects.values_list(pk, flat = True).distinct()
-            set_model.add(values)
-        
-        distinct = set(chain(*set_model))
-        print(len(distinct))
+        result = NSQIP_META.objects.get(Q(Name__iexact=pk1) | Q(Name__iexact=pk2))
+        if result.values:
+            result = {'label':result.Label,'type': result.type,'values':result.values.split(',')}
+        else:
+            result = {'label':result.Label,'type': result.type,'values':[]}
+
         return Response(result)
 
 class FilterView(APIView):
     def post(self, request):
         filter_query_and = Q()
         result = {}
+        removed=set()
         for group in request.data['filters']:
             filter_query_or = Q()
-           
+            for model in DATA_TABLES:
+                if group['filter'].lower() not in [field.name for field in model._meta.get_fields()]:
+                    removed.add(model)
             for searchTerm in group['searchTerms']:
-                filter_query_or.add(Q(**{ group['filter'].lower() : int(searchTerm)}), Q.OR)
+                if searchTerm.isnumeric():
+                    searchTerm=int(searchTerm)
+                filter_query_or.add(Q(**{ group['filter'].lower() : searchTerm}), Q.OR)
             filter_query_and.add(filter_query_or, Q.AND)
+
         for model in DATA_TABLES:
-            result[model.objects.model._meta.db_table]=model.objects.filter(filter_query_and).count()
+            if model in removed:
+                result[model.objects.model._meta.db_table]=0
+            else:
+                result[model.objects.model._meta.db_table]=model.objects.filter(filter_query_and).count()
         result = [{'db':k,'count':v} for k,v in result.items()]
 
         return Response(result)
@@ -63,6 +70,7 @@ class FilterExportView(APIView):
         filter_query_and = Q()
         result_perdb = {}
         select = [item.lower() for item in request.data['selectColumns']]
+        
         for group in request.data['filters']:
             filter_query_or = Q()
             for searchTerm in group['searchTerms']:
@@ -78,6 +86,53 @@ class FilterExportView(APIView):
         
 
         return Response(result)
+    
+class Populate(APIView):
+    def post(self, request):
+        cols = NSQIP_META.objects.all().values() 
+        for col in cols:
+            set_model =set()
+    
+            for model in DATA_TABLES:
+                col_name = "_".join(col['Name'].lower().split(" "))
+                
+                if col_name in [field.name for field in model._meta.get_fields()]:
+                    values = model.objects.values_list(col_name, flat = True).distinct()
+           
+                    set_model.add(values)
+                    if len(list(set(chain(*set_model))))>100:
+                        break
+            set_values = list(set(chain(*set_model)))
+            if len(set_values)<100:
+                casted = [str(i) for i in set_values]
+                insert = ','.join(casted)   
+            else:
+                insert = None
+            if isinstance(set_values[0], str):
+                type = 'string'
+            elif isinstance(set_values[0], int):
+                type = 'int'
+            elif isinstance(set_values[0], float):
+                type = 'float'
+            else:
+                type=None
+   
+            t = NSQIP_META.objects.get(Name=col['Name'])
+            t.values = insert
+            t.type=type
+            t.save()
+        return Response('hi')
+'''     
+           
+'''
+         
+           
+
+
+        
+
+        
+
 
 
 
