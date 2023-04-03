@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from .views import RecordCount,ColumnsNames,ColumnsDetails,FilterView,FilterExportView,Populate
+from .views import RecordCount,ColumnsNames,ColumnsDetails,FilterView,FilterExportView,Populate,TestNull,AddNull
 
 
 router =DefaultRouter()
@@ -31,6 +31,16 @@ urlpatterns = router.urls +[
     path(
         "populate",
         Populate.as_view(), 
+        name = "fill_table"
+    ),
+    path(
+        "addNull",
+        AddNull.as_view(), 
+        name = "fill_table"
+    ),
+    path(
+        "null",
+        TestNull.as_view(), 
         name = "fill_table"
     )
 

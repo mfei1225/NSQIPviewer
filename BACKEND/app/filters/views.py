@@ -26,7 +26,8 @@ class ColumnsNames(APIView):
     
 class ColumnsDetails(ReadOnlyModelViewSet):
     def list(self, request):
-        result = NSQIP_META.objects.all().values()  
+        result = NSQIP_META.objects.all().values()
+        print(len(result))
         return Response(result)
 
     def retrieve(self, request,pk):
@@ -69,16 +70,32 @@ class FilterExportView(APIView):
     def post(self, request):
         filter_query_and = Q()
         result_perdb = {}
+        removed=set()
         select = [item.lower() for item in request.data['selectColumns']]
-        
+
+        if not select:
+            select=set([field.name for field in NSQIP2018._meta.get_fields()])
+            
+            for model in DATA_TABLES:
+                select =select.intersection(set([field.name for field in model._meta.get_fields()]))
+   
         for group in request.data['filters']:
             filter_query_or = Q()
+            for model in DATA_TABLES:
+                if group['filter'].lower() not in [field.name for field in model._meta.get_fields()]:
+                    removed.add(model)
             for searchTerm in group['searchTerms']:
+                if searchTerm.isnumeric():
+                    searchTerm=int(searchTerm)
                 filter_query_or.add(Q(**{ group['filter'].lower()  : int(searchTerm)}), Q.OR)
             filter_query_and.add(filter_query_or, Q.AND)
         for model in DATA_TABLES:
             result_perdb[model.objects.model._meta.db_table]=model.objects.filter(filter_query_and).values(*select)
+            
+        
         querysets = []
+       
+
         for value in result_perdb.values():
             querysets.append(value)
         
@@ -122,9 +139,23 @@ class Populate(APIView):
             t.type=type
             t.save()
         return Response('hi')
-'''     
-           
-'''
+class TestNull(APIView):
+    def get(self, request):
+        count =0
+        try:
+            count = NSQIP2018.objects.filter(otherproc1='NULL').values("readmission")
+        except Exception as e:
+            print(e.args)
+        return Response(count)
+
+class AddNull(APIView):
+    def post(self, request):
+        select=set([field.name for field in NSQIP2018._meta.get_fields()])
+        for model in DATA_TABLES:
+            select =select.union(set([field.name for field in model._meta.get_fields()]))
+        print(len(select))
+        return Response('test')
+
          
            
 

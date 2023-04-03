@@ -98,7 +98,7 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
                         onChange={handleChangeTextbox}
                         name="Search"
                     />
-                        Added filters:
+                        <div>Added filters:</div>
                         {
                             allSearchTerm.map((item) => {
                                 return (
