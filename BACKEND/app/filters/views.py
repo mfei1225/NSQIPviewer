@@ -11,6 +11,11 @@ from django.core import serializers
 
 DATA_TABLES = [NSQIP2018,NSQIP2017,NSQIP2016,NSQIP2015,NSQIP2014,NSQIP2013,NSQIP2012,NSQIP2011,NSQIP2010,NSQIP2009,NSQIP2008]
 
+class test(APIView):
+    def get(self, request):
+ 
+        return Response('working')
+
 class RecordCount(APIView):
     def get(self, request):
         result = {}
