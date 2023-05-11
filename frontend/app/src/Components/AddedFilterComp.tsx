@@ -7,7 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 
 import Typography from '@mui/material/Typography';
 
-
+import { Link } from "react-router-dom";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -41,16 +41,57 @@ interface AddedFilterProps {
 }
 const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCount, selectColumns, setCount, setAddedFilters }) => {
   const [isLoadingExport, setIsLoadingExport] = useState(false)
-  const [includeNull, setIncludeNull] = useState(false)
+  const [excludeNull, setExcludeNull] = useState(true)
   const applyFilters = () => {
 
     setIsLoadingCount(true)
     axios.post('filter', {
-      filters: filters
+      filters: filters,
+      selectColumns: selectColumns
     }
     ).then((res) => {
+      const dbcount:dbCount[] = []
+      var keys:any= new Set()
+      console.log(res.data)
+      Object.keys(res.data).forEach(function(key, index) {
+        console.log(...Object.keys(res.data[key][0]))
+        keys.add(...Object.keys(res.data[key][0]))
+      })
+      
+      keys = Array.from(keys);
+      console.log(keys)
+      var replacer = function(key:any, value:any) { 
+        if(value === null ||value === undefined ){
+          return 'NULL'
+        }
+        return value
+      }
+      Object.keys(res.data).forEach(function(key, index) {
+  
+        var csv = res.data[key].map(function(row:any){
+          var array = keys.map(function(fieldName:any){
+            return JSON.stringify(row[fieldName], replacer)
+          })
+          if(excludeNull){
+            if (array.includes("\"NULL\"") || array.includes("-99")){
+              return 
+            }
+          }
+        
+          return array.join(',')
+        })
+    
+        csv = csv.filter(function( element:any ) {
+          return element !== undefined;
+       });
 
-      setCount(res.data)
+       
+        dbcount.push(
+          {'db':key,'count':csv.length}
+        )
+      });
+     
+      setCount(dbcount)
       setIsLoadingCount(false)
     }
     )
@@ -65,10 +106,10 @@ const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCou
 
   const handleChangeCheckbox = (event: any) => {
     if (event.target.checked) {
-      setIncludeNull(true)
+      setExcludeNull(true)
     }
     else {
-      setIncludeNull(false)
+      setExcludeNull(false)
     }
   };
 
@@ -81,11 +122,33 @@ const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCou
       selectColumns: selectColumns
     }
     ).then((res) => {
+      const keys:any= Object.keys(res.data[0])
+  
+      var replacer = function(key:any, value:any) { 
+        if(value === null ||value === undefined ){
+          return 'NULL'
+        }
+        return value
+      }
 
-      const array = [Object.keys(res.data[0])].concat(res.data)
-      const csv = array.map(it => {
-        return Object.values(it).toString()
-      }).join('\n')
+     
+      var csv = res.data.map(function(row:any){
+        const array = keys.map(function(fieldName:any){
+          return JSON.stringify(row[fieldName], replacer)
+        })
+        if(excludeNull){
+          if (array.includes("\"NULL\"") ||array.includes("-99")){
+            return 
+          }
+        }
+        return array.join(',')
+      })
+      csv = csv.filter(function( element:any ) {
+        return element !== undefined;
+     });
+      csv.unshift(keys.join(',')) // add header column
+      csv = csv.join('\r\n');
+    
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const pom = document.createElement('a');
@@ -149,6 +212,8 @@ const AddedFilterComp: React.VFC<AddedFilterProps> = ({ filters, setIsLoadingCou
       <Button variant="outlined" onClick={applyFilters}>Apply Funnel Filter</Button>
 
       {isLoadingExport ? <CircularProgress /> : <Button variant="outlined" onClick={applyFiltersAndExport}>Apply Funnel Filter and export</Button>}
+
+      <Link to="/Data"><Button variant="outlined" onClick={applyFilters}>Look At Data</Button></Link>
 
 
     </Drawer>

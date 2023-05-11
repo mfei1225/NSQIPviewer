@@ -17,6 +17,7 @@ class NSQIP_META(models.Model):
         managed = False
         db_table = 'NSQIP_META'
 
+
 class NSQIP2008(models.Model):
     caseid = models.IntegerField(blank=True, primary_key=True)
     sex = models.CharField(db_column='SEX', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -2804,7 +2805,6 @@ class NSQIP2017(models.Model):
         db_table = 'NSQIP2017'
 
 class NSQIP2018(models.Model):
-
     pufyear = models.IntegerField(blank=True, null=True)
     caseid = models.IntegerField(blank=True, primary_key=True)
     sex = models.CharField(max_length=255, blank=True, null=True)
@@ -2926,7 +2926,7 @@ class NSQIP2018(models.Model):
     concpt9 = models.FloatField(blank=True, null=True)
     conwrvu9 = models.FloatField(blank=True, null=True)
     concurr10 = models.CharField(max_length=255, blank=True, null=True)
-    concpt10 = models.FloatField(blank=True, null=True)
+    concpt10 = models.CharField(max_length=255, blank=True, null=True)
     conwrvu10 = models.FloatField(blank=True, null=True)
     emergncy = models.CharField(max_length=255, blank=True, null=True)
     wndclas = models.CharField(max_length=255, blank=True, null=True)
@@ -3079,6 +3079,7 @@ class NSQIP2018(models.Model):
     othcdiff = models.CharField(max_length=255, blank=True, null=True)
     nothcdiff = models.IntegerField(blank=True, null=True)
     dothcdiff = models.IntegerField(blank=True, null=True)
+
 
     class Meta:
         managed = False

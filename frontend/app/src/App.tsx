@@ -1,6 +1,7 @@
 import React from 'react';
 
 import HomePage from './Pages/HomePage';
+import DataPage from './Pages/DataPage';
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,6 +14,7 @@ function App() {
  <Router>
         <Routes>
           <Route path="/" element={ <HomePage/>}/>
+          <Route path="/data" element={ <DataPage/>}/>
         </Routes>
       </Router>
 

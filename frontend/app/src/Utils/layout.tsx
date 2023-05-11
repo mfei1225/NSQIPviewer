@@ -28,6 +28,24 @@ export const menu = [
         ],
     },
     {
+        title:"Pre-op Lab",
+        items: [
+            "PRSODM",
+            "PRBUN",
+            "PRCREAT",
+            "PRALBUM",
+            "PRBILI",
+            "PRSGOT",
+            "PRALKPH",
+            "PRWBC",
+            "PRHCT",
+            "PRPLATE",
+            "PRPTT",
+            "PRINR", 
+            "PRPT" 
+        ],
+    },
+    {
         title:"Demographic",
         items: [
             "SEX",

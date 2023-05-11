@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import Slider from '@mui/material/Slider';
 
 
 const drawerWidth = 230;
@@ -34,6 +35,11 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
     const [allSearchTerm, setAllSearchTerm] = useState<any[]>([])
     const [filterType, setFilterType] = useState<string>("")
     const [filterValues, setFilterValues] = useState<string[]>([])
+    const [slideValue, setSliderValue] = React.useState<number[]>([20, 37]);
+
+  const handleChangeSlider = (event: Event, newValue: number | number[]) => {
+    setSliderValue(newValue as number[]);
+  };
 
     useEffect(() => {
 
@@ -109,6 +115,7 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
                             })
                         }
                         <Button variant="outlined" onClick={addToFilter}>Add Filter(OR logic)</Button>
+                        
                     </div>
                         : <FormGroup>
                             {
@@ -128,6 +135,14 @@ const DetailFiltersComp: React.VFC<DetailFiltersProps> = ({ filter, addedFilters
                 }
 
                 <Button variant="outlined" onClick={addToFunnel}>Add to Funnel</Button>
+
+                {filterType== 'float'&&<Slider
+        getAriaLabel={() => 'Temperature range'}
+        value={slideValue}
+        onChange={handleChangeSlider}
+        valueLabelDisplay="auto"
+
+      />}
             </Box>
         </div>
     );

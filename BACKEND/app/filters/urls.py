@@ -44,4 +44,7 @@ urlpatterns = router.urls +[
         name = "fill_table"
     )
 
+    ##Grace New Endpoint Insert Here. columns/all
+
+
 ]
